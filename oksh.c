@@ -103,5 +103,5 @@ int main(void) {
     }
     foreground_check = false;
   }
-  return EXIT_SUCCESS;
+  return 1;
 }
