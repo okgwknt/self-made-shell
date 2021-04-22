@@ -1,16 +1,12 @@
 #include "header.h"
 
 int get_path(char *env[]) {
-  // environment variable
   char *strenv;
   if ((strenv = getenv("PATH")) == NULL) {
     printf("error enviroment variable fail\n");
   }
-  // : separation
-  int env_num;
-  env_num = divide_colon(env, strenv);
 
-  return env_num;
+  return divide_colon(env, strenv);
 }
 int divide_colon(char *env[], char *strenv) {
   int i;

@@ -12,25 +12,28 @@ typedef struct _child {
 } child_t;
 
 // global 変数
-child_t *head = NULL;
-child_t *tail = NULL;
-int sum_child = 0; // tail number and running process
-int status;
+extern child_t *head;
+extern child_t *tail;
+extern int sum_child; // tail number and running process
+extern int status;
 //　foregroundになっているプロセスの情報を保存
-pid_t foreground_pid;
-bool foreground_check = false;
+extern pid_t foreground_pid;
+extern bool foreground_check;
 
 // child_processのヘッダ
 void add_process(pid_t pid, bool background_flag);
 void delete_process(pid_t pid);
 
 // read_cmdのヘッダ
-int read_cmd(char *argv[], int argc);
+int read_cmd(char *argv[]);
 int divide_space(char *argv[], char *buf);
 
 // get_pathのヘッダ
 int get_path(char *env[]);
 int divide_colon(char *env[], char *strenv);
+
+// create_full_pathのヘッダ
+void create_full_path(char *env[], int env_num, char *arg0);
 
 // signalfilenoのヘッダ
 void signal_background(int sig);

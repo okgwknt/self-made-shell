@@ -1,18 +1,17 @@
+#include <string.h>
+
 #include "header.h"
 
-int read_cmd(char *argv[], int argc) {
+int read_cmd(char *argv[]) {
   // command enter
   char command[256];
-  for (int i = 0; i < 256; i++) {
-    command[i] = '\0';
-  }
+
   if (fgets(command, sizeof(command), stdin) == NULL) {
     fputs("Read Error\n", stderr);
     exit(EXIT_FAILURE);
   }
-  sscanf(command, "%[^\n]", command);
 
-  // char *argv = malloc(10 * sizeof(char *));
+  command[strlen(command) - 1] = '\0';
 
   return divide_space(argv, command);
 }

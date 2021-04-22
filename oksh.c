@@ -1,4 +1,3 @@
-#include <dirent.h>
 #include <errno.h>
 #include <signal.h>
 #include <string.h>
@@ -7,6 +6,15 @@
 #include <unistd.h>
 
 #include "header.h"
+
+// global 変数
+child_t *head = NULL;
+child_t *tail = NULL;
+int sum_child = 0; // tail number and running process
+int status;
+//　foregroundになっているプロセスの情報を保存
+pid_t foreground_pid;
+bool foreground_check = false;
 
 int main(void) {
   // jobs
@@ -29,12 +37,12 @@ int main(void) {
   int env_num = get_path(env);
 
   while (1) {
-    char **argv;
-    int argc;
+    char *argv[256];
+    int argc = 0;
 
     printf("> ");
 
-    argc = read_cmd(argv, argc);
+    argc = read_cmd(argv);
 
     if (argc < 1) {
       continue;
@@ -63,35 +71,9 @@ int main(void) {
       jobs();
       continue;
     }
-
-    // パス解析とパス結合
     if (strncmp(argv[0], "/", 1) != 0) {
-      for (int i = 0; i < env_num; i++) {
-        DIR *dir_pointa;
-        struct dirent *dp;
-        if ((dir_pointa = opendir(env[i])) == NULL) {
-          perror("opendir");
-          exit(EXIT_FAILURE);
-        }
-        while ((dp = readdir(dir_pointa)) != NULL) {
-          if (strncmp(argv[0], dp->d_name, sizeof(256)) == 0) {
-            char env_tmp[256];
-            for (int j = 0; j < 256; j++) {
-              env_tmp[j] = '\0';
-            }
-            strncpy(env_tmp, env[i], 255);
-            strncat(env_tmp, "/", 2);
-            strncat(env_tmp, argv[0], 255);
-            argv[0] = &env_tmp[0];
-            closedir(dir_pointa);
-            goto loop;
-          }
-        }
-        closedir(dir_pointa);
-      }
+      create_full_path(env, env_num, argv[0]);
     }
-
-  loop:
 
     // generate child process
     pid = fork();
@@ -119,7 +101,6 @@ int main(void) {
         pid = waitpid(pid, &status, 0);
       }
     }
-    // free(argv);
     foreground_check = false;
   }
   return EXIT_SUCCESS;
