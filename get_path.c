@@ -1,6 +1,6 @@
-#include "func.h"
+#include "header.h"
 
-int get_path(char *env) {
+int get_path(char *env[]) {
   // environment variable
   char *strenv;
   if ((strenv = getenv("PATH")) == NULL) {
@@ -12,7 +12,6 @@ int get_path(char *env) {
 
   return env_num;
 }
-
 int divide_colon(char *env[], char *strenv) {
   int i;
   for (i = 0; *strenv != '\0'; i++) {

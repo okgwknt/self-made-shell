@@ -1,4 +1,8 @@
-#include "func.h"
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+#include "header.h"
 
 void signal_background(int sig) {
   pid_t all_pid;
@@ -7,7 +11,6 @@ void signal_background(int sig) {
     if (WIFEXITED(status) != 0) {
       printf("pid %d finished\n", all_pid);
       delete_process(all_pid);
-      child_number--;
     }
   }
 }

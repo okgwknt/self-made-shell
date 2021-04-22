@@ -1,24 +1,20 @@
-#include "func.h"
+#include "header.h"
 
-int read_cmd(char *argv, int argc) {
+int read_cmd(char *argv[], int argc) {
   // command enter
-  char line[256], command[256];
+  char command[256];
   for (int i = 0; i < 256; i++) {
     command[i] = '\0';
   }
-  if (fgets(line, sizeof(line), stdin) == NULL) {
+  if (fgets(command, sizeof(command), stdin) == NULL) {
     fputs("Read Error\n", stderr);
     exit(EXIT_FAILURE);
   }
-  sscanf(line, "%[^\n]", command);
-  // argv
-  for (int i = 0; i < 256; i++) {
-    argv[i] = (char *)calloc(10, sizeof(char));
-  }
+  sscanf(command, "%[^\n]", command);
 
-  int argc = space_judge(argv, command);
+  // char *argv = malloc(10 * sizeof(char *));
 
-  return argc;
+  return divide_space(argv, command);
 }
 
 int divide_space(char *argv[], char *buf) {

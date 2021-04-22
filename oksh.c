@@ -1,9 +1,12 @@
-#include "func.h"
-#include "get_path.c"
-#include "read_cmd.c"
+#include <dirent.h>
+#include <errno.h>
+#include <signal.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
-#include "fg.c"
-#include "jobs.c"
+#include "header.h"
 
 int main(void) {
   // jobs
@@ -25,17 +28,13 @@ int main(void) {
   char *env[512];
   int env_num = get_path(env);
 
-  /*
-
-
-  */
   while (1) {
     char **argv;
     int argc;
 
     printf("> ");
 
-    argc = read_cmd(&argc, argc);
+    argc = read_cmd(argv, argc);
 
     if (argc < 1) {
       continue;
@@ -57,11 +56,11 @@ int main(void) {
       break;
     }
     if (strncmp(argv[0], "fg", 3) == 0) {
-      fg(&argv);
+      fg(argv[1]);
       continue;
     }
-    if (strncmp(argv[0], "jobs", 4) == 0) {
-      jobs(&argv);
+    if (strncmp(argv[0], "jobs", 5) == 0) {
+      jobs();
       continue;
     }
 
@@ -111,7 +110,6 @@ int main(void) {
     if (pid > 0) {
       printf("start %s (pid: %d)\n", argv[0], pid);
       add_process(pid, background_flag);
-      child_number++;
 
       // wait child process Foreground
       if (background_flag == false) {
@@ -125,55 +123,4 @@ int main(void) {
     foreground_check = false;
   }
   return EXIT_SUCCESS;
-}
-
-void delete_process(pid_t pid) {
-  child_t *target = head;
-  while (1) {
-    if (target == NULL) {
-      printf("Not found");
-      exit(EXIT_FAILURE);
-    }
-    if (target->pid == pid) {
-      break;
-    }
-    target = target->next;
-  }
-  // delete process
-  printf("pid %d delete process\n", target->pid);
-  if (target->pid == head->pid) {
-    child_t *new = head->next;
-    free(head);
-    head = new;
-  } else {
-    child_t *new = head;
-    while (new->next != target) {
-      new = new->next;
-    }
-    new->next = target->next;
-    free(target);
-    target = new;
-  }
-  return;
-}
-void add_process(pid_t pid, bool background_flag) {
-  child_t *x = malloc(1 * sizeof(child_t));
-  // set pid ID
-  x->pid = pid;
-  // FG or BG
-  if (background_flag == true) {
-    x->fg_status = false;
-  } else {
-    x->fg_status = true;
-  }
-  // next
-  x->next = NULL;
-  // linear list
-  if (head == NULL) {
-    head = x;
-    tail = x;
-  } else {
-    tail->next = x;
-    tail = x;
-  }
 }
