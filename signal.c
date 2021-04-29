@@ -4,13 +4,13 @@
 
 #include "header.h"
 
-void signal_background(int sig) {
-  pid_t all_pid;
-  int status;
-  while ((all_pid = waitpid(-1, &status, WNOHANG)) > 0) {
-    if (WIFEXITED(status) != 0) {
-      printf("pid %d finished\n", all_pid);
-      delete_process(all_pid);
+void signal_fin(int sig) {
+  pid_t fin_pid;
+  int fin_status;
+  while ((fin_pid = waitpid(-1, &fin_status, WNOHANG)) > 0) {
+    if (WIFEXITED(fin_status) != 0) {
+      printf("pid %d finished\n", fin_pid);
+      delete_process(fin_pid);
     }
   }
 }

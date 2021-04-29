@@ -3,30 +3,37 @@
 
 #include "header.h"
 
-void create_full_path(char *env[], int env_num, char *arg0) {
-  // パス解析とパス結合
+void create_full_path(char *env[], int env_num, char *argv[]) {
+  printf("%s\n", argv[0]);
+  printf("%d", env_num);
+
   for (int i = 0; i < env_num; i++) {
     DIR *dir_pointa;
     struct dirent *dp;
     dir_pointa = opendir(env[i]);
     if (dir_pointa == NULL) {
+      printf("%s\n", env[i]);
       perror("opendir");
-      exit(EXIT_FAILURE);
+      continue;
     }
     while ((dp = readdir(dir_pointa)) != NULL) {
-      if (strncmp(arg0, dp->d_name, sizeof(256)) == 0) {
-        char env_tmp[256];
-        for (int j = 0; j < 256; j++) {
-          env_tmp[j] = '\0';
-        }
-        strncpy(env_tmp, env[i], 255);
-        strncat(env_tmp, "/", 2);
-        strncat(env_tmp, arg0, 255);
-        arg0 = &env_tmp[0];
+      if (strncmp(argv[0], dp->d_name, sizeof(char) * 256) == 0) {
+        printf("1");
+
+        char *path_tmp;
+        strncpy(path_tmp, env[i], 128);
+        strncat(path_tmp, "/", 2);
+        strncat(path_tmp, argv[0], sizeof(argv[0]));
+        printf("%s\n", path_tmp);
+        // strncpy(argv[0], env_tmp, 64);
+        argv[0] = &path_tmp[0];
         closedir(dir_pointa);
+        printf("%s\n", argv[0]);
         return;
       }
     }
     closedir(dir_pointa);
   }
+  printf("exit");
+  return;
 }

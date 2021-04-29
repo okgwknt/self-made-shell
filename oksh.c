@@ -21,14 +21,14 @@ int main(void) {
   pid_t pid;
 
   // Internal command
-  char *internal_command[] = {"quit", "exit", "q"};
+  char *internal_command[] = {"quit", "q"};
 
   // ^C 取得
   if (signal(SIGINT, signal_sigint) == SIG_ERR) {
     exit(EXIT_FAILURE);
   }
   // バックグラウンドプロセス終了取得
-  if (signal(SIGCHLD, signal_background) == SIG_ERR) {
+  if (signal(SIGCHLD, signal_fin) == SIG_ERR) {
     exit(EXIT_FAILURE);
   }
 
@@ -59,21 +59,27 @@ int main(void) {
 
     // shell終了
     if (strncmp(argv[0], internal_command[0], 5) == 0 ||
-        strncmp(argv[0], internal_command[1], 5) == 0 ||
-        strncmp(argv[0], internal_command[2], 5) == 0) {
+        strncmp(argv[0], internal_command[1], 2) == 0) {
       break;
     }
+
     if (strncmp(argv[0], "fg", 3) == 0) {
-      fg(argv[1]);
+      if (sum_child > 0) {
+        fg(argv[1]);
+      }
       continue;
     }
+
     if (strncmp(argv[0], "jobs", 5) == 0) {
       jobs();
       continue;
     }
+
     if (strncmp(argv[0], "/", 1) != 0) {
-      create_full_path(env, env_num, argv[0]);
+      create_full_path(env, env_num, argv);
     }
+
+    printf("%s\n", argv[0]);
 
     // generate child process
     pid = fork();
@@ -82,13 +88,13 @@ int main(void) {
     if (pid == -1) {
       exit(EXIT_FAILURE);
     }
-    // which process judge
+    // child process
     if (pid == 0) {
       setpgid(0, 0);
-      // child shell do
       execv(argv[0], argv);
       exit(EXIT_FAILURE);
     }
+    // parent process
     if (pid > 0) {
       printf("start %s (pid: %d)\n", argv[0], pid);
       add_process(pid, background_flag);
@@ -99,9 +105,9 @@ int main(void) {
         foreground_pid = pid;
         // Foreground do
         pid = waitpid(pid, &status, 0);
+        foreground_check = false;
       }
     }
-    foreground_check = false;
   }
   return 1;
 }

@@ -17,7 +17,6 @@ void fg(char *arg1) {
     }
     change_fg(fg_target);
   }
-  delete_process(fg_target->pid);
 }
 void change_fg(child_t *fg_target) {
   printf("change foreground");

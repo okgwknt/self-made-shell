@@ -33,10 +33,10 @@ int get_path(char *env[]);
 int divide_colon(char *env[], char *strenv);
 
 // create_full_pathのヘッダ
-void create_full_path(char *env[], int env_num, char *arg0);
+void create_full_path(char *env[], int env_num, char *argv[]);
 
 // signalfilenoのヘッダ
-void signal_background(int sig);
+void signal_fin(int sig);
 void signal_sigint(int sig);
 
 // jobsとfgのヘッダ
