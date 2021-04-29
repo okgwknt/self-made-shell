@@ -15,7 +15,6 @@ typedef struct _child {
 extern child_t *head;
 extern child_t *tail;
 extern int sum_child; // tail number and running process
-extern int status;
 //　foregroundになっているプロセスの情報を保存
 extern pid_t foreground_pid;
 extern bool foreground_check;
@@ -40,8 +39,8 @@ void signal_fin(int sig);
 void signal_sigint(int sig);
 
 // jobsとfgのヘッダ
-extern void jobs();
-extern void fg(char *arg1);
-extern void change_fg(child_t *fg_target);
+void jobs();
+void fg(char *arg1);
+void change_fg(child_t *fg_target);
 
 #endif

@@ -11,7 +11,6 @@
 child_t *head = NULL;
 child_t *tail = NULL;
 int sum_child = 0; // tail number and running process
-int status;
 //　foregroundになっているプロセスの情報を保存
 pid_t foreground_pid;
 bool foreground_check = false;
@@ -19,6 +18,7 @@ bool foreground_check = false;
 int main(void) {
   // jobs
   pid_t pid;
+  int status;
 
   // Internal command
   char *internal_command[] = {"quit", "q"};
@@ -37,7 +37,7 @@ int main(void) {
   int env_num = get_path(env);
 
   while (1) {
-    char *argv[256];
+    char *argv[64];
     int argc = 0;
 
     printf("> ");
@@ -78,8 +78,6 @@ int main(void) {
     if (strncmp(argv[0], "/", 1) != 0) {
       create_full_path(env, env_num, argv);
     }
-
-    printf("%s\n", argv[0]);
 
     // generate child process
     pid = fork();

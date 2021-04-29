@@ -19,8 +19,9 @@ void fg(char *arg1) {
   }
 }
 void change_fg(child_t *fg_target) {
+  int wstatus;
   printf("change foreground");
   foreground_pid = fg_target->pid;
-  waitpid(fg_target->pid, &status, 0);
+  waitpid(fg_target->pid, &wstatus, 0);
   printf("pid %d finished\n", fg_target->pid);
 }

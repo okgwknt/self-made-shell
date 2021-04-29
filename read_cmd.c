@@ -13,7 +13,11 @@ int read_cmd(char *argv[]) {
 
   command[strlen(command) - 1] = '\0';
 
-  return divide_space(argv, command);
+  int argc = divide_space(argv, command);
+
+  argv[argc] = NULL;
+
+  return argc;
 }
 
 int divide_space(char *argv[], char *buf) {
