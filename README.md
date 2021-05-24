@@ -2,7 +2,7 @@
 
 ## Description
 
-2 回生実験　自作シェル
+2 回生　自作シェル
 
 ## Usage
 
