@@ -2,7 +2,7 @@
 
 #include "header.h"
 
-int read_cmd(char *argv[]) {
+int read_cmd(char **argv) {
   // command enter
   char command[256];
 
@@ -15,12 +15,12 @@ int read_cmd(char *argv[]) {
 
   int argc = divide_space(argv, command);
 
-  argv[argc] = NULL;
+  argv[argc] = '\0';
 
   return argc;
 }
 
-int divide_space(char *argv[], char *buf) {
+int divide_space(char **argv, char *buf) {
   int i;
 
   for (i = 0; *buf != '\0'; i++) {

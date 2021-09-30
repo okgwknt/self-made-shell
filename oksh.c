@@ -17,7 +17,6 @@ bool foreground_check = false;
 
 int main(void) {
   // jobs
-  pid_t pid;
   int status;
 
   // Internal command
@@ -37,12 +36,12 @@ int main(void) {
   int env_num = get_path(env);
 
   while (1) {
-    char *argv[64];
-    int argc = 0;
+
+    char **argv = malloc(32 * sizeof(char *));
 
     printf("> ");
 
-    argc = read_cmd(argv);
+    int argc = read_cmd(argv);
 
     if (argc < 1) {
       continue;
@@ -76,16 +75,21 @@ int main(void) {
     }
 
     if (strncmp(argv[0], "/", 1) != 0) {
-      create_full_path(env, env_num, argv);
+      if (create_full_path(env, env_num, argv) == -1) {
+        exit(EXIT_FAILURE);
+      }
     }
+
+    // printf("%s\n", argv[0]);
 
     // generate child process
-    pid = fork();
+    pid_t pid = fork();
 
     // cannot generate child process
-    if (pid == -1) {
+    if (pid < 0) {
       exit(EXIT_FAILURE);
     }
+
     // child process
     if (pid == 0) {
       setpgid(0, 0);
@@ -95,6 +99,7 @@ int main(void) {
     // parent process
     if (pid > 0) {
       printf("start %s (pid: %d)\n", argv[0], pid);
+
       add_process(pid, background_flag);
 
       // wait child process Foreground
@@ -106,6 +111,8 @@ int main(void) {
         foreground_check = false;
       }
     }
+
+    free(argv);
   }
   return 1;
 }

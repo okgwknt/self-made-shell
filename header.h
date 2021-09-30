@@ -24,15 +24,15 @@ void add_process(pid_t pid, bool background_flag);
 void delete_process(pid_t pid);
 
 // read_cmdのヘッダ
-int read_cmd(char *argv[]);
-int divide_space(char *argv[], char *buf);
+int read_cmd(char **argv);
+int divide_space(char **argv, char *buf);
 
 // get_pathのヘッダ
 int get_path(char *env[]);
 int divide_colon(char *env[], char *strenv);
 
 // create_full_pathのヘッダ
-void create_full_path(char *env[], int env_num, char *argv[]);
+int create_full_path(char *env[], int env_num, char **argv);
 
 // signalfilenoのヘッダ
 void signal_fin(int sig);
