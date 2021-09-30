@@ -31,13 +31,9 @@ int main(void) {
     exit(EXIT_FAILURE);
   }
 
-  //　環境変数取得
-  char *env[512];
-  int env_num = get_path(env);
-
   while (1) {
 
-    char **argv = malloc(32 * sizeof(char *));
+    char **argv = (char **)calloc(10, sizeof(char *));
 
     printf("> ");
 
@@ -75,12 +71,13 @@ int main(void) {
     }
 
     if (strncmp(argv[0], "/", 1) != 0) {
-      if (create_full_path(env, env_num, argv) == -1) {
+      if (create_full_path(argv) == -1) {
         exit(EXIT_FAILURE);
       }
     }
 
-    // printf("%s\n", argv[0]);
+    printf("%s\n", argv[0]);
+    printf("%s\n", argv[1]);
 
     // generate child process
     pid_t pid = fork();
@@ -103,7 +100,7 @@ int main(void) {
       add_process(pid, background_flag);
 
       // wait child process Foreground
-      if (background_flag == false) {
+      if (!background_flag) {
         foreground_check = true;
         foreground_pid = pid;
         // Foreground do
@@ -111,8 +108,6 @@ int main(void) {
         foreground_check = false;
       }
     }
-
-    free(argv);
   }
   return 1;
 }

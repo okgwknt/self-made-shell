@@ -21,23 +21,20 @@ int read_cmd(char **argv) {
 }
 
 int divide_space(char **argv, char *buf) {
-  int i;
 
-  for (i = 0; *buf != '\0'; i++) {
-    while (*buf == ' ') {
-      *buf = '\0';
-      buf++;
-    }
+  int size = sizeof(*argv) / sizeof(char);
+  for (int i = 0; i < size; i++)
+    argv[i] = NULL;
 
-    if (*buf == '\0') {
-      break;
-    }
-    argv[i] = buf;
-    while (*buf != '\0' && *buf != ' ') {
-      buf++;
-    }
+  // 引数に分割
+  char *word;       /* 分割済み文字列 */
+  int num_word = 0; /* wordの個数 */
+  word = strtok(buf, " ");
+  while (word != 0) {
+    argv[num_word] = word;
+    word = strtok(NULL, " ");
+    num_word += 1;
   }
 
-  argv[i] = NULL;
-  return i;
+  return num_word;
 }

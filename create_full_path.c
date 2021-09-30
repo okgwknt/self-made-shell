@@ -3,10 +3,14 @@
 
 #include "header.h"
 
-int create_full_path(char *env[], int env_num, char **argv) {
+int create_full_path(char **argv) {
 
   char command[32];
-  strncpy(command, argv[0], sizeof(argv[0]));
+  strncpy(command, argv[0], strlen(argv[0]));
+
+  //　環境変数取得
+  char *env[512];
+  int env_num = get_path(env);
 
   for (int i = 0; i < env_num; i++) {
     DIR *dir_pointa;
@@ -28,7 +32,6 @@ int create_full_path(char *env[], int env_num, char **argv) {
         argv[0] = &path_tmp[0];
         // strncmp(argv[0], path_tmp, 256);
 
-        // printf("%s\n", argv[0]);
         closedir(dir_pointa);
         return 0;
       }

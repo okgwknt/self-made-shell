@@ -32,7 +32,7 @@ int get_path(char *env[]);
 int divide_colon(char *env[], char *strenv);
 
 // create_full_pathのヘッダ
-int create_full_path(char *env[], int env_num, char **argv);
+int create_full_path(char **argv);
 
 // signalfilenoのヘッダ
 void signal_fin(int sig);
