@@ -1,9 +1,16 @@
 #ifndef HEADER_H // フラグが立っていなければ（ if HEADER_H is not defined ）
 #define HEADER_H
 
+#include <dirent.h>
+#include <errno.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 typedef struct _child {
   pid_t pid;

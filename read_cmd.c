@@ -1,26 +1,27 @@
-#include <string.h>
-
 #include "header.h"
 
-int read_cmd(char **argv) {
+int read_cmd(char **argv)
+{
   // command enter
-  char command[256];
+  char input[1024];
 
-  if (fgets(command, sizeof(command), stdin) == NULL) {
+  if (fgets(input, sizeof(input), stdin) == NULL)
+  {
     fputs("Read Error\n", stderr);
     exit(EXIT_FAILURE);
   }
 
-  command[strlen(command) - 1] = '\0';
+  input[strlen(input) - 1] = '\0';
 
-  int argc = divide_space(argv, command);
+  int argc = divide_space(argv, input);
 
   argv[argc] = '\0';
 
   return argc;
 }
 
-int divide_space(char **argv, char *buf) {
+int divide_space(char **argv, char *buf)
+{
 
   int size = sizeof(*argv) / sizeof(char);
   for (int i = 0; i < size; i++)
@@ -30,7 +31,8 @@ int divide_space(char **argv, char *buf) {
   char *word;       /* 分割済み文字列 */
   int num_word = 0; /* wordの個数 */
   word = strtok(buf, " ");
-  while (word != 0) {
+  while (word != 0)
+  {
     argv[num_word] = word;
     word = strtok(NULL, " ");
     num_word += 1;

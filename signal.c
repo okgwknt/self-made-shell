@@ -1,7 +1,3 @@
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
 #include "header.h"
 
 void signal_fin(int sig) {

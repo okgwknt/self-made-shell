@@ -1,10 +1,3 @@
-#include <errno.h>
-#include <signal.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-
 #include "header.h"
 
 // global 変数
@@ -15,38 +8,46 @@ int sum_child = 0; // tail number and running process
 pid_t foreground_pid;
 bool foreground_check = false;
 
-int main(void) {
+int main(void)
+{
   // jobs
   int status;
 
   // Internal command
   char *internal_command[] = {"quit", "q"};
 
-  // ^C 取得
-  if (signal(SIGINT, signal_sigint) == SIG_ERR) {
+  if (signal(SIGINT, signal_sigint) == SIG_ERR)
+  {
     exit(EXIT_FAILURE);
   }
-  // バックグラウンドプロセス終了取得
-  if (signal(SIGCHLD, signal_fin) == SIG_ERR) {
+  if (signal(SIGCHLD, signal_fin) == SIG_ERR)
+  {
     exit(EXIT_FAILURE);
   }
 
-  while (1) {
+  while (1)
+  {
 
-    char **argv = (char **)calloc(10, sizeof(char *));
+    // char **argv = (char **)calloc(10, sizeof(char *));
+    char **argv = (char **)malloc(10 * sizeof(char *));
 
     printf("> ");
 
     int argc = read_cmd(argv);
 
-    if (argc < 1) {
+    printf("s");
+
+    if (argc < 1)
+    {
       continue;
     }
 
     // & check and & delete
     bool background_flag = false;
-    if (argc > 1) {
-      if (strncmp(argv[argc - 1], "&", 2) == 0) {
+    if (argc > 1)
+    {
+      if (strncmp(argv[argc - 1], "&", 2) == 0)
+      {
         argv[argc - 1] = NULL;
         background_flag = true;
       }
@@ -54,24 +55,30 @@ int main(void) {
 
     // shell終了
     if (strncmp(argv[0], internal_command[0], 5) == 0 ||
-        strncmp(argv[0], internal_command[1], 2) == 0) {
+        strncmp(argv[0], internal_command[1], 2) == 0)
+    {
       break;
     }
 
-    if (strncmp(argv[0], "fg", 3) == 0) {
-      if (sum_child > 0) {
+    if (strncmp(argv[0], "fg", 3) == 0)
+    {
+      if (sum_child > 0)
+      {
         fg(argv[1]);
       }
       continue;
     }
 
-    if (strncmp(argv[0], "jobs", 5) == 0) {
+    if (strncmp(argv[0], "jobs", 5) == 0)
+    {
       jobs();
       continue;
     }
 
-    if (strncmp(argv[0], "/", 1) != 0) {
-      if (create_full_path(argv) == -1) {
+    if (strncmp(argv[0], "/", 1) != 0)
+    {
+      if (create_full_path(argv) == -1)
+      {
         exit(EXIT_FAILURE);
       }
     }
@@ -83,24 +90,29 @@ int main(void) {
     pid_t pid = fork();
 
     // cannot generate child process
-    if (pid < 0) {
+    if (pid < 0)
+    {
       exit(EXIT_FAILURE);
     }
 
     // child process
-    if (pid == 0) {
+    if (pid == 0)
+    {
       setpgid(0, 0);
       execv(argv[0], argv);
       exit(EXIT_FAILURE);
     }
+
     // parent process
-    if (pid > 0) {
+    if (pid > 0)
+    {
       printf("start %s (pid: %d)\n", argv[0], pid);
 
       add_process(pid, background_flag);
 
       // wait child process Foreground
-      if (!background_flag) {
+      if (!background_flag)
+      {
         foreground_check = true;
         foreground_pid = pid;
         // Foreground do
@@ -108,6 +120,11 @@ int main(void) {
         foreground_check = false;
       }
     }
+    // for (int i = 0; i < 10; i++)
+    // {
+    //   free(argv[i]);
+    // }
+    // free(argv);
   }
   return 1;
 }
