@@ -12,7 +12,10 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-typedef struct _child {
+#define FLAG 0
+
+typedef struct _child
+{
   pid_t pid;
   bool fg_status;
   struct _child *next;
@@ -25,6 +28,9 @@ extern int sum_child; // tail number and running process
 //　foregroundになっているプロセスの情報を保存
 extern pid_t foreground_pid;
 extern bool foreground_check;
+
+extern char *env[512];
+extern int env_num;
 
 // child_processのヘッダ
 void add_process(pid_t pid, bool background_flag);
@@ -49,5 +55,7 @@ void signal_sigint(int sig);
 void jobs();
 void fg(char *arg1);
 void change_fg(child_t *fg_target);
+
+pid_t execute(char **argv);
 
 #endif

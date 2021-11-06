@@ -6,17 +6,12 @@ int create_full_path(char **argv)
   char command[32];
   strncpy(command, argv[0], strlen(argv[0]));
 
-  //　環境変数取得
-  char *env[512];
-  int env_num = get_path(env);
-
   for (int i = 0; i < env_num; i++)
   {
     DIR *dir_pointa;
     dir_pointa = opendir(env[i]);
     if (dir_pointa == NULL)
     {
-      // printf("%s\n", env[i]);
       // perror("opendir");
       continue;
     }
@@ -27,12 +22,11 @@ int create_full_path(char **argv)
       if (strncmp(command, dp->d_name, 32) == 0)
       {
         // printf("SUCCESS\n");
-        char path_tmp[256];
-        strncpy(path_tmp, env[i], 128);
-        strncat(path_tmp, "/", 2);
-        strncat(path_tmp, command, sizeof(command));
-        // argv[0] = &path_tmp[0];
-        strncmp(argv[0], path_tmp, sizeof(path_tmp));
+        char *path = malloc(sizeof(char) * 1024);
+        strncpy(path, env[i], sizeof(env[i]));
+        strncat(path, "/", 1);
+        strncat(path, command, sizeof(command));
+        strncpy(argv[0], path, sizeof(path));
 
         closedir(dir_pointa);
         return 0;
@@ -40,6 +34,5 @@ int create_full_path(char **argv)
     }
     closedir(dir_pointa);
   }
-  printf("fail\n");
   return -1;
 }

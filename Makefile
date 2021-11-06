@@ -1,5 +1,5 @@
 PROGRAM = oksh
-OBJS = commands/fg.o commands/jobs.o get_path.o read_cmd.o signal.o child_process.o create_full_path.o
+OBJS = commands/fg.o commands/jobs.o get_path.o read_cmd.o signal.o child_process.o create_full_path.o execute.o
 CC = gcc
 CFLAGS = -O2
 

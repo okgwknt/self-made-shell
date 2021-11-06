@@ -7,6 +7,8 @@ int sum_child = 0; // tail number and running process
 //　foregroundになっているプロセスの情報を保存
 pid_t foreground_pid;
 bool foreground_check = false;
+char *env[512];
+int env_num;
 
 int main(void)
 {
@@ -25,17 +27,18 @@ int main(void)
     exit(EXIT_FAILURE);
   }
 
+  env_num = get_path(env);
+
   while (1)
   {
 
     // char **argv = (char **)calloc(10, sizeof(char *));
-    char **argv = (char **)malloc(10 * sizeof(char *));
+    // char **argv = (char **)malloc(10 * sizeof(char *));
+    char **argv = malloc(10 * sizeof(char *));
 
     printf("> ");
 
     int argc = read_cmd(argv);
-
-    printf("s");
 
     if (argc < 1)
     {
@@ -53,7 +56,7 @@ int main(void)
       }
     }
 
-    // shell終了
+    // inner command start
     if (strncmp(argv[0], internal_command[0], 5) == 0 ||
         strncmp(argv[0], internal_command[1], 2) == 0)
     {
@@ -74,57 +77,43 @@ int main(void)
       jobs();
       continue;
     }
+    // inner command end
 
+#if FLAG
+    // create full path
     if (strncmp(argv[0], "/", 1) != 0)
     {
       if (create_full_path(argv) == -1)
       {
-        exit(EXIT_FAILURE);
+        puts("not found");
+        continue;
       }
     }
+#else
+#endif
 
     printf("%s\n", argv[0]);
     printf("%s\n", argv[1]);
 
     // generate child process
-    pid_t pid = fork();
+    pid_t pid = execute(argv);
 
-    // cannot generate child process
-    if (pid < 0)
+    printf("start %s (pid: %d)\n", argv[0], pid);
+
+    add_process(pid, background_flag);
+
+    // wait child process Foreground
+    if (!background_flag)
     {
-      exit(EXIT_FAILURE);
+      foreground_check = true;
+      foreground_pid = pid;
+      // Foreground do
+      pid = waitpid(pid, &status, 0);
+      foreground_check = false;
     }
 
-    // child process
-    if (pid == 0)
-    {
-      setpgid(0, 0);
-      execv(argv[0], argv);
-      exit(EXIT_FAILURE);
-    }
-
-    // parent process
-    if (pid > 0)
-    {
-      printf("start %s (pid: %d)\n", argv[0], pid);
-
-      add_process(pid, background_flag);
-
-      // wait child process Foreground
-      if (!background_flag)
-      {
-        foreground_check = true;
-        foreground_pid = pid;
-        // Foreground do
-        pid = waitpid(pid, &status, 0);
-        foreground_check = false;
-      }
-    }
-    // for (int i = 0; i < 10; i++)
-    // {
-    //   free(argv[i]);
-    // }
-    // free(argv);
+    free(*argv);
+    free(argv);
   }
   return 1;
 }

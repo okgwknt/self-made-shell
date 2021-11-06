@@ -3,14 +3,13 @@
 int read_cmd(char **argv)
 {
   // command enter
-  char input[1024];
+  char *input = malloc(sizeof(char) * 1024);
 
-  if (fgets(input, sizeof(input), stdin) == NULL)
+  if (fgets(input, 1024, stdin) == NULL)
   {
     fputs("Read Error\n", stderr);
     exit(EXIT_FAILURE);
   }
-
   input[strlen(input) - 1] = '\0';
 
   int argc = divide_space(argv, input);
