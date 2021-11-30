@@ -3,8 +3,8 @@
 int create_full_path(char **argv)
 {
 
-  char command[32];
-  strncpy(command, argv[0], strlen(argv[0]));
+  char command[64];
+  strncpy(command, argv[0], strlen(command));
 
   for (int i = 0; i < env_num; i++)
   {
@@ -19,15 +19,15 @@ int create_full_path(char **argv)
     struct dirent *dp;
     while (dp = readdir(dir_pointa))
     {
-      if (strncmp(command, dp->d_name, 32) == 0)
+      if (strncmp(command, dp->d_name, strlen(command)) == 0)
       {
-        // printf("SUCCESS\n");
         char *path = malloc(sizeof(char) * 1024);
         strncpy(path, env[i], sizeof(env[i]));
         strncat(path, "/", 1);
         strncat(path, command, sizeof(command));
         strncpy(argv[0], path, sizeof(path));
-
+        free(path);
+        // argv[0][sizeof(path)] = '\0';
         closedir(dir_pointa);
         return 0;
       }

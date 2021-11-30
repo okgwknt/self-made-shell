@@ -92,9 +92,6 @@ int main(void)
 #else
 #endif
 
-    printf("%s\n", argv[0]);
-    printf("%s\n", argv[1]);
-
     // generate child process
     pid_t pid = execute(argv);
 

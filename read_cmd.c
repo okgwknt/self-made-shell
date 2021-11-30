@@ -14,7 +14,7 @@ int read_cmd(char **argv)
 
   int argc = divide_space(argv, input);
 
-  argv[argc] = '\0';
+  argv[argc] = NULL;
 
   return argc;
 }
@@ -26,9 +26,8 @@ int divide_space(char **argv, char *buf)
   for (int i = 0; i < size; i++)
     argv[i] = NULL;
 
-  // 引数に分割
-  char *word;       /* 分割済み文字列 */
-  int num_word = 0; /* wordの個数 */
+  char *word;
+  int num_word = 0;
   word = strtok(buf, " ");
   while (word != 0)
   {

@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #define FLAG 0
 
@@ -56,6 +57,6 @@ void jobs();
 void fg(char *arg1);
 void change_fg(child_t *fg_target);
 
-pid_t execute(char **argv);
+pid_t execute(char *argv[]);
 
 #endif

@@ -1,6 +1,6 @@
 #include "header.h"
 
-pid_t execute(char **argv)
+pid_t execute(char *argv[])
 {
     pid_t pid = fork();
 
@@ -14,11 +14,14 @@ pid_t execute(char **argv)
         return pid;
     }
 
-    setpgid(0, 0);
+    // setpgid(0, 0);
+
 #if FLAG
     execv(argv[0], argv);
 #else
     execvp(argv[0], argv);
 #endif
+
+    perror(argv[0]);
     exit(EXIT_FAILURE);
 }
